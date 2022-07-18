@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Airport;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use File;
@@ -19,12 +20,12 @@ class AirportSeeder extends Seeder
         $json = file_get_contents('database/data/airports_short_list.json');
         $airports = json_decode($json, true);
         foreach ($airports as $airport) {
-            DB::table('airports')->upsert([
+            Airport::updateOrCreate([
                 "name" => $airport['name'],
                 "code" => $airport['code'],
                 "lat" => $airport['lat'],
                 "lng" => $airport['lon']
-            ], 'id');
+            ]);
         }
     }
 }

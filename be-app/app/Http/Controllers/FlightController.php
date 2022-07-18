@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Flight;
 use Illuminate\Http\Request;
+use Exception;
 
 class FlightController extends Controller
 {
@@ -14,22 +15,24 @@ class FlightController extends Controller
      */
     public function listBySearch(Request $request)
     {
+        $validated = $request->validate([
+            'code_departure' => 'required|string|exists:airports,code|max:3',
+            'code_arrival' => 'required|string|exists:airports,code|max:3',
+        ]);
+
         $per_page = $request->get('per_page', 25);
         $sort = $request->get('sort', 'price');
         $order = $request->get('order', 'DESC');
 
-        $dep_code = $request->get('code_departure');
-        $arr_code = $request->get('code_arrival');
+        $dep_code = $validated['code_departure'];
+        $arr_code = $validated['code_arrival'];
 
-        if ($request->has('params')) {
-            $users = Flight::whereLike($request->get('params'))
-                ->orderBy($sort, $order)
-                ->paginate($per_page);
-        } else {
-            $users = Flight::orderBy($sort, $order)
-                ->paginate($per_page);
-        }
+        $query = Flight::orderBy($sort, $order);
 
-        return response()->json($users);
+        $query->where($validated);
+
+        $flights = $query->paginate($per_page);
+
+        return response()->json($flights);
     }
 }

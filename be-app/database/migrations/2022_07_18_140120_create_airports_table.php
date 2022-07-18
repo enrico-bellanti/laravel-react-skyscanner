@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('code')->nullable(false);
             $table->decimal('lat', 10, 7);
             $table->decimal('lng', 10, 7);
+            $table->timestamps();
         });
     }
 
