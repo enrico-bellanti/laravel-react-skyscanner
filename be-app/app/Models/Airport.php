@@ -21,8 +21,13 @@ class Airport extends Model
         'lng',
     ];
 
-    public function flights()
+    public function arrivalFlights()
     {
-        return $this->hasMany(Flight::class);
+        return $this->hasMany(Flight::class, 'code', 'code_arrival');
+    }
+
+    public function departureFlights()
+    {
+        return $this->hasMany(Flight::class, 'code', 'code_departure');
     }
 }

@@ -20,8 +20,23 @@ class Flight extends Model
         'price'
     ];
 
-    public function airport()
+    public function arrivalAirport()
     {
-        return $this->belongsTo(Airport::class);
+        return $this->belongsTo(Airport::class, 'code_arrival', 'code');
+    }
+
+    public function departureAirport()
+    {
+        return $this->belongsTo(Airport::class, 'code_departure', 'code');
+    }
+
+    public function arrivalFlights()
+    {
+        return $this->hasMany($this, 'code_arrival', 'code_departure');
+    }
+
+    public function getFlightsWithStopOver($arrival)
+    {
+        return $this->arrivalFlights()->whereCodeDeparture($arrival)->get();
     }
 }

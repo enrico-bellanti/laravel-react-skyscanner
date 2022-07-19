@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('airports', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
-            $table->string('code')->nullable(false);
+            $table->string('code')->nullable(false)->unique();
             $table->decimal('lat', 10, 7);
             $table->decimal('lng', 10, 7);
             $table->timestamps();
