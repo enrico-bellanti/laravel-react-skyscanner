@@ -36,7 +36,7 @@ const App = () => {
           <Flights flights={flights} />
         </Grid>
 
-        <Grid item xs={12} sm={4} md={3}>
+        <Grid item xs={12} sm={5} md={3}>
           <Search />
         </Grid>
       </Grid>

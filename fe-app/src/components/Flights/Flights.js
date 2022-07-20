@@ -1,7 +1,12 @@
 import React from "react";
+
 //components
 import Flight from "./Flight/Flight";
+
+//material
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
+import AirplanemodeActive from "@material-ui/icons/AirplanemodeActive";
+
 import useStyles from "./styles";
 
 //selectors
@@ -17,46 +22,58 @@ const Flights = () => {
     return (
       <>
         {flights.STEPOVER_0 && (
-          <Grid
-            className={classes.container}
-            container
-            alignItems="stretch"
-            spacing={3}
-          >
-            {flights.STEPOVER_0.map((flight) => (
-              <Grid item xs={12} sm={12} md={6} lg={3}>
-                <Flight flight={(flight, 0)} />
+          <>
+            <div className={classes.directFlightContainer}>
+              <Typography className={classes.textField} variant="h6">
+                Directs Flights
+                <AirplanemodeActive className={classes.plane} />
+              </Typography>
+              <Grid container alignItems="stretch" spacing={3}>
+                {flights.STEPOVER_0.map((flight) => (
+                  <Grid item xs={12} lg={8}>
+                    <Flight flight={(flight, 0)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </div>
+          </>
         )}
         {flights.STEPOVER_1 && (
-          <Grid
-            className={classes.container}
-            container
-            alignItems="stretch"
-            spacing={3}
-          >
-            {flights.STEPOVER_1.map((flight) => (
-              <Grid item xs={12} sm={12} md={6} lg={3}>
-                <Flight flight={(flight, 1)} />
+          <>
+            <div className={classes.oneStopFlightContainer}>
+              <Typography className={classes.textField} variant="h6">
+                One stopover Flights
+                <AirplanemodeActive className={classes.plane} />
+                <AirplanemodeActive className={classes.plane} />
+              </Typography>
+              <Grid container alignItems="stretch" spacing={3}>
+                {flights.STEPOVER_1.map((flight) => (
+                  <Grid item xs={12} lg={8}>
+                    <Flight flight={(flight, 0)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </div>
+          </>
         )}
         {flights.STEPOVER_2 && (
-          <Grid
-            className={classes.container}
-            container
-            alignItems="stretch"
-            spacing={3}
-          >
-            {flights.STEPOVER_2.map((flight) => (
-              <Grid item xs={12} sm={12} md={6} lg={3}>
-                <Flight flight={(flight, 2)} />
+          <>
+            <div className={classes.twoStopFlightContainer}>
+              <Typography className={classes.textField} variant="h6">
+                Two stopover Flights
+                <AirplanemodeActive className={classes.plane} />
+                <AirplanemodeActive className={classes.plane} />
+                <AirplanemodeActive className={classes.plane} />
+              </Typography>
+              <Grid container alignItems="stretch" spacing={3}>
+                {flights.STEPOVER_2.map((flight) => (
+                  <Grid item xs={12} lg={8}>
+                    <Flight flight={(flight, 0)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </div>
+          </>
         )}
       </>
     );
