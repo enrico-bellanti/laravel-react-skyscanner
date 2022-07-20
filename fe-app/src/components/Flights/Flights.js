@@ -31,7 +31,7 @@ const Flights = () => {
               <Grid container alignItems="stretch" spacing={3}>
                 {flights.STEPOVER_0.map((flight) => (
                   <Grid item xs={12} lg={8}>
-                    <Flight flight={(flight, 0)} />
+                    <Flight flight={flight} />
                   </Grid>
                 ))}
               </Grid>
@@ -49,7 +49,7 @@ const Flights = () => {
               <Grid container alignItems="stretch" spacing={3}>
                 {flights.STEPOVER_1.map((flight) => (
                   <Grid item xs={12} lg={8}>
-                    <Flight flight={(flight, 0)} />
+                    <Flight flight={flight} />
                   </Grid>
                 ))}
               </Grid>
@@ -68,7 +68,7 @@ const Flights = () => {
               <Grid container alignItems="stretch" spacing={3}>
                 {flights.STEPOVER_2.map((flight) => (
                   <Grid item xs={12} lg={8}>
-                    <Flight flight={(flight, 0)} />
+                    <Flight flight={flight} />
                   </Grid>
                 ))}
               </Grid>
