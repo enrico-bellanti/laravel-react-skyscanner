@@ -14,8 +14,10 @@ import { getFlightsBySearch } from "../../actions/flights";
 
 const Search = () => {
   const { airports } = useSelector((state) => state.airports);
-  const [arrival, setArrival] = useState("");
-  const [departure, setDeparture] = useState("");
+  const [searchQuery, setQuery] = useState({
+    code_departure: "",
+    code_arrival: "",
+  });
   const [listDeparture, setListDeparture] = useState([]);
   const [listArrival, setListArrival] = useState([]);
 
@@ -31,25 +33,20 @@ const Search = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const setArrivalCode = (code) => {
-    setArrival(code);
-    const list = airports.filter((a) => a.code !== code);
+  const setArrivalCode = (code_arrival) => {
+    setQuery({ ...searchQuery, code_arrival });
+    const list = airports.filter((a) => a.code !== code_arrival);
     setListDeparture(list);
   };
-  const setDepartureCode = (code) => {
-    setDeparture(code);
-    const list = airports.filter((a) => a.code !== code);
+  const setDepartureCode = (code_departure) => {
+    setQuery({ ...searchQuery, code_departure });
+    const list = airports.filter((a) => a.code !== code_departure);
     setListArrival(list);
   };
 
   const searchFlight = () => {
-    if (departure !== "" && arrival !== "") {
-      dispatch(
-        getFlightsBySearch({
-          code_departure: departure,
-          code_arrival: arrival,
-        })
-      );
+    if (searchQuery.code_departure !== "" && searchQuery.code_arrival !== "") {
+      dispatch(getFlightsBySearch(searchQuery));
     } else {
       alert("You must insert Departure and Arrival");
     }

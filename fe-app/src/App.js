@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 //material
-import { Container, Grid } from "@material-ui/core";
+import { Container, Grid, Paper } from "@material-ui/core";
 
 //components
 import Search from "./components/Search/Search";
 import Flights from "./components/Flights/Flights";
+import Pagination from "./components/Pagination/Pagination";
 
 //actions
 import { getAirports } from "./actions/airports";
@@ -37,6 +38,9 @@ const App = () => {
 
         <Grid item xs={12} sm={5} md={3}>
           <Search />
+          <Paper className={classes.pagination} elevation={6}>
+            <Pagination />
+          </Paper>
         </Grid>
       </Grid>
     </Container>

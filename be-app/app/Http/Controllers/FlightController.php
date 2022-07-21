@@ -61,7 +61,7 @@ class FlightController extends Controller
 
 
         // 2 STEOVER
-        $three_stepover = DB::table('flights AS FLT1')
+        $two_stepover = DB::table('flights AS FLT1')
             ->where('FLT1.code_departure', $dep_code)
             ->whereNot('FLT1.code_arrival', $arr_code)
             ->join('flights AS FLT2', 'FLT1.code_arrival', '=', 'FLT2.code_departure')
@@ -93,13 +93,15 @@ class FlightController extends Controller
             ->get();
 
 
-        $result = array_merge(
+        $travels = array_merge(
             $this->reorderStepoversList($no_stepover),
             $this->reorderStepoversList($one_stepover),
-            $this->reorderStepoversList($three_stepover)
+            $this->reorderStepoversList($two_stepover)
         );
 
-        return response()->json($result);
+        $paginated = collect($travels)->paginate(15);
+
+        return response()->json($paginated);
     }
 
     protected function reorderStepoversList($list)
