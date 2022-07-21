@@ -32,11 +32,11 @@ const App = () => {
         alignItems="stretch"
         spacing={3}
       >
-        <Grid item xs={12} sm={7} md={9}>
+        <Grid item xs={12} sm={7} md={7}>
           <Flights />
         </Grid>
 
-        <Grid item xs={12} sm={5} md={3}>
+        <Grid item xs={12} sm={5} md={5}>
           <Search />
           <Paper className={classes.pagination} elevation={6}>
             <Pagination />

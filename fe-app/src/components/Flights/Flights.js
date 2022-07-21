@@ -25,7 +25,7 @@ const Flights = () => {
       );
     } else if (flights.length > 0) {
       return flights.map((travel, i) => (
-        <Grid key={i} item xs={12} sm={12} md={8}>
+        <Grid key={i} item xs={12} sm={12} md={12}>
           <Flight travel={travel} />
         </Grid>
       ));

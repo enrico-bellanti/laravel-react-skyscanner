@@ -99,7 +99,11 @@ class FlightController extends Controller
             $this->reorderStepoversList($two_stepover)
         );
 
-        $paginated = collect($travels)->paginate(15);
+        $paginated = collect($travels)->paginate(15)->toArray();
+
+        $data = array_values($paginated['data']);
+
+        $paginated['data'] = $data;
 
         return response()->json($paginated);
     }
