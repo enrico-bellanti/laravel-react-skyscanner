@@ -14,11 +14,16 @@ import { useSelector } from "react-redux";
 
 const Flights = () => {
   const { flights, isLoading } = useSelector((state) => state.flights);
+
   const classes = useStyles();
 
   if (isLoading) {
     return <CircularProgress />;
-  } else if (flights.STEPOVER_0 || flights.STEPOVER_1 || flights.STEPOVER_2) {
+  } else if (
+    (!!flights.STEPOVER_0 && flights.STEPOVER_0.length > 0) ||
+    (!!flights.STEPOVER_1 && flights.STEPOVER_1.length > 0) ||
+    (!!flights.STEPOVER_2 && flights.STEPOVER_2.length > 0)
+  ) {
     return (
       <>
         {flights.STEPOVER_0 && (
@@ -77,6 +82,12 @@ const Flights = () => {
         )}
       </>
     );
+  } else if (
+    (!!flights.STEPOVER_0 && flights.STEPOVER_0.length === 0) ||
+    (!!flights.STEPOVER_1 && flights.STEPOVER_1.length === 0) ||
+    (!!flights.STEPOVER_2 && flights.STEPOVER_2.length === 0)
+  ) {
+    return "There are not flights for your search.";
   } else {
     return "Let's run a search to find your flight";
   }

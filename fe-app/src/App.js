@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 //material
 import { Container, Grid } from "@material-ui/core";
@@ -8,12 +8,21 @@ import { Container, Grid } from "@material-ui/core";
 import Search from "./components/Search/Search";
 import Flights from "./components/Flights/Flights";
 
+//actions
+import { getAirports } from "./actions/airports";
+
 // styles
 import useStyles from "./styles";
 
 const App = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { flights } = useSelector((state) => state.flights);
+
+  useEffect(() => {
+    dispatch(getAirports());
+  }, [dispatch]);
 
   return (
     <Container maxWidth="xl">
