@@ -17,15 +17,19 @@ class AirportSeeder extends Seeder
      */
     public function run()
     {
-        $json = file_get_contents('database/data/airports_short_list.json');
+        $json = file_get_contents('database/data/airports.json');
         $airports = json_decode($json, true);
-        foreach ($airports as $airport) {
-            Airport::updateOrCreate([
-                "name" => $airport['name'],
-                "code" => $airport['code'],
-                "lat" => $airport['lat'],
-                "lng" => $airport['lon']
-            ]);
+        $randomElms = array_rand($airports, 20);
+        foreach ($randomElms as $elmKey) {
+            $airport = $airports[$elmKey];
+            if ($airport['name'] !== "" && $airport['code'] !== "" && $airport['lat'] !== "" && $airport['lon'] !== "") {
+                Airport::updateOrCreate([
+                    "name" => $airport['name'],
+                    "code" => $airport['code'],
+                    "lat" => $airport['lat'],
+                    "lng" => $airport['lon']
+                ]);
+            }
         }
     }
 }

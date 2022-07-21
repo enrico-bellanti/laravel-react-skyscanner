@@ -10,24 +10,9 @@ export default makeStyles((theme) => ({
   textField: {
     margin: "30px 0",
   },
-  plane: {
-    marginLeft: "5px",
-  },
 
-  directFlightContainer: {
+  travelsContainer: {
     backgroundColor: "#7B9E87",
-    marginBottom: "30px",
-    padding: "10px",
-    borderRadius: 4,
-  },
-  oneStopFlightContainer: {
-    backgroundColor: "#1B4079",
-    marginBottom: "30px",
-    padding: "10px",
-    borderRadius: 4,
-  },
-  twoStopFlightContainer: {
-    backgroundColor: "#4A442D",
     marginBottom: "30px",
     padding: "10px",
     borderRadius: 4,

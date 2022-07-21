@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 //material
 import { Container, Grid } from "@material-ui/core";
@@ -18,8 +18,6 @@ const App = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { flights } = useSelector((state) => state.flights);
-
   useEffect(() => {
     dispatch(getAirports());
   }, [dispatch]);
@@ -34,7 +32,7 @@ const App = () => {
         spacing={3}
       >
         <Grid item xs={12} sm={7} md={9}>
-          <Flights flights={flights} />
+          <Flights />
         </Grid>
 
         <Grid item xs={12} sm={5} md={3}>

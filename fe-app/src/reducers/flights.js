@@ -5,7 +5,7 @@ import {
   END_LOADING,
 } from "../constants/actionTypes";
 
-export default (state = { isLoading: false, flights: [] }, action) => {
+export default (state = { isLoading: false, flights: 0 }, action) => {
   switch (action.type) {
     case START_LOADING:
       return { ...state, isLoading: true };

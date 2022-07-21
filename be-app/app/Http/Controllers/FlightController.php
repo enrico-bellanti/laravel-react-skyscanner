@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Flight;
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class FlightController extends Controller
@@ -16,7 +14,6 @@ class FlightController extends Controller
      */
     public function listBySearch(Request $request)
     {
-        $flight_list = [];
         $validated = $request->validate([
             'code_departure' => 'required|string|exists:airports,code|max:3',
             'code_arrival' => 'required|string|exists:airports,code|max:3',
@@ -26,7 +23,7 @@ class FlightController extends Controller
         $arr_code = $validated['code_arrival'];
 
         // NO STEPOVER
-        $flight_list['STEPOVER_0'] = DB::table('flights')
+        $no_stepover = DB::table('flights')
             ->where($validated)
             ->select(
                 'id AS id_1',
@@ -38,8 +35,9 @@ class FlightController extends Controller
             )
             ->get();
 
+
         // 1 STEOVER
-        $flight_list['STEPOVER_1'] = DB::table('flights AS FLT1')
+        $one_stepover = DB::table('flights AS FLT1')
             ->where('FLT1.code_departure', $dep_code)
             ->whereNot('FLT1.code_arrival', $arr_code)
             ->join('flights AS FLT2', 'FLT1.code_arrival', '=', 'FLT2.code_departure')
@@ -61,8 +59,9 @@ class FlightController extends Controller
             )
             ->get();
 
+
         // 2 STEOVER
-        $flight_list['STEPOVER_2'] = DB::table('flights AS FLT1')
+        $three_stepover = DB::table('flights AS FLT1')
             ->where('FLT1.code_departure', $dep_code)
             ->whereNot('FLT1.code_arrival', $arr_code)
             ->join('flights AS FLT2', 'FLT1.code_arrival', '=', 'FLT2.code_departure')
@@ -93,6 +92,48 @@ class FlightController extends Controller
             )
             ->get();
 
-        return response()->json($flight_list);
+
+        $result = array_merge(
+            $this->reorderStepoversList($no_stepover),
+            $this->reorderStepoversList($one_stepover),
+            $this->reorderStepoversList($three_stepover)
+        );
+
+        return response()->json($result);
+    }
+
+    protected function reorderStepoversList($list)
+    {
+        $newList = [];
+
+        foreach ($list as $item) {
+            $currentObj = [];
+            if (isset($item->id_1)) {
+                $currentObj[] = [
+                    "id" => $item->id_1,
+                    "code_departure" => $item->code_departure_1,
+                    "code_arrival" => $item->code_arrival_1,
+                    "price" => $item->price_1
+                ];
+            }
+            if (isset($item->id_2)) {
+                $currentObj[] = [
+                    "id" => $item->id_2,
+                    "code_departure" => $item->code_departure_2,
+                    "code_arrival" => $item->code_arrival_2,
+                    "price" => $item->price_2
+                ];
+            }
+            if (isset($item->id_3)) {
+                $currentObj[] = [
+                    "id" => $item->id_3,
+                    "code_departure" => $item->code_departure_3,
+                    "code_arrival" => $item->code_arrival_3,
+                    "price" => $item->price_3
+                ];
+            }
+            $newList[] = $currentObj;
+        }
+        return $newList;
     }
 }

@@ -5,7 +5,6 @@ import Flight from "./Flight/Flight";
 
 //material
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
-import AirplanemodeActive from "@material-ui/icons/AirplanemodeActive";
 
 import useStyles from "./styles";
 
@@ -17,80 +16,48 @@ const Flights = () => {
 
   const classes = useStyles();
 
-  if (isLoading) {
-    return <CircularProgress />;
-  } else if (
-    (!!flights.STEPOVER_0 && flights.STEPOVER_0.length > 0) ||
-    (!!flights.STEPOVER_1 && flights.STEPOVER_1.length > 0) ||
-    (!!flights.STEPOVER_2 && flights.STEPOVER_2.length > 0)
-  ) {
-    return (
-      <>
-        {flights.STEPOVER_0 && (
-          <>
-            <div className={classes.directFlightContainer}>
-              <Typography className={classes.textField} variant="h6">
-                Directs Flights
-                <AirplanemodeActive className={classes.plane} />
-              </Typography>
-              <Grid container alignItems="stretch" spacing={3}>
-                {flights.STEPOVER_0.map((flight) => (
-                  <Grid item xs={12} lg={8}>
-                    <Flight flight={flight} />
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
-          </>
-        )}
-        {flights.STEPOVER_1 && (
-          <>
-            <div className={classes.oneStopFlightContainer}>
-              <Typography className={classes.textField} variant="h6">
-                One stopover Flights
-                <AirplanemodeActive className={classes.plane} />
-                <AirplanemodeActive className={classes.plane} />
-              </Typography>
-              <Grid container alignItems="stretch" spacing={3}>
-                {flights.STEPOVER_1.map((flight) => (
-                  <Grid item xs={12} lg={8}>
-                    <Flight flight={flight} />
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
-          </>
-        )}
-        {flights.STEPOVER_2 && (
-          <>
-            <div className={classes.twoStopFlightContainer}>
-              <Typography className={classes.textField} variant="h6">
-                Two stopover Flights
-                <AirplanemodeActive className={classes.plane} />
-                <AirplanemodeActive className={classes.plane} />
-                <AirplanemodeActive className={classes.plane} />
-              </Typography>
-              <Grid container alignItems="stretch" spacing={3}>
-                {flights.STEPOVER_2.map((flight) => (
-                  <Grid item xs={12} lg={8}>
-                    <Flight flight={flight} />
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
-          </>
-        )}
-      </>
-    );
-  } else if (
-    (!!flights.STEPOVER_0 && flights.STEPOVER_0.length === 0) ||
-    (!!flights.STEPOVER_1 && flights.STEPOVER_1.length === 0) ||
-    (!!flights.STEPOVER_2 && flights.STEPOVER_2.length === 0)
-  ) {
-    return "There are not flights for your search.";
-  } else {
-    return "Let's run a search to find your flight";
-  }
+  const render = () => {
+    if (isLoading) {
+      return (
+        <Grid item xs={12} sm={12} md={8}>
+          <CircularProgress />
+        </Grid>
+      );
+    } else if (flights.length > 0) {
+      return flights.map((travel, i) => (
+        <Grid key={i} item xs={12} sm={12} md={8}>
+          <Flight travel={travel} />
+        </Grid>
+      ));
+    } else if (flights.length < 0) {
+      return (
+        <Grid item xs={12} sm={12} md={8}>
+          <Typography className={classes.textField} variant="inherit">
+            There is no flight for your search. Try another airport
+          </Typography>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid item xs={12} sm={12} md={8}>
+          <Typography className={classes.textField} variant="inherit">
+            Let's run a search to find your flight!
+          </Typography>
+        </Grid>
+      );
+    }
+  };
+
+  return (
+    <div className={classes.travelsContainer}>
+      <Typography className={classes.textField} variant="h4">
+        Flight List
+      </Typography>
+      <Grid container alignItems="stretch" spacing={3}>
+        {render()}
+      </Grid>
+    </div>
+  );
 };
 
 export default Flights;

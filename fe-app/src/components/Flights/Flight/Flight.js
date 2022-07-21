@@ -8,45 +8,21 @@ import {
   Divider,
 } from "@material-ui/core/";
 
+import AirplanemodeActive from "@material-ui/icons/AirplanemodeActive";
+
 //selectors
 import { useSelector } from "react-redux";
 
 import useStyles from "./styles";
 
-const Flight = ({ flight }) => {
+const Flight = ({ travel }) => {
   const classes = useStyles();
   const { airports } = useSelector((state) => state.airports);
-  const travel = [];
 
   const getAptNameFromCode = (code, airports) => {
     const { name } = airports.find((apt) => apt.code === code);
     return name;
   };
-
-  if (flight.id_1) {
-    travel.push({
-      id: flight.id_1,
-      code_departure: flight.code_departure_1,
-      code_arrival: flight.code_arrival_1,
-      price: flight.price_1,
-    });
-  }
-  if (flight.id_2) {
-    travel.push({
-      id: flight.id_2,
-      code_departure: flight.code_departure_2,
-      code_arrival: flight.code_arrival_2,
-      price: flight.price_2,
-    });
-  }
-  if (flight.id_3) {
-    travel.push({
-      id: flight.id_3,
-      code_departure: flight.code_departure_3,
-      code_arrival: flight.code_arrival_3,
-      price: flight.price_3,
-    });
-  }
 
   const randNumb = () => Math.floor(Math.random() * 100);
 
@@ -66,19 +42,22 @@ const Flight = ({ flight }) => {
       </Box>
       <Box>
         <CardContent>
-          {travel.map((flt) => (
-            <>
-              <div>
-                <Typography component="div" variant="inherit">
-                  {getAptNameFromCode(flt.code_departure, airports)} -
-                  {getAptNameFromCode(flt.code_arrival, airports)}
-                </Typography>
-                <Typography component="div" variant="inherit">
-                  € {flt.price}
-                </Typography>
-              </div>
+          <div>
+            {travel.map((f, i) => (
+              <AirplanemodeActive key={i} />
+            ))}
+          </div>
+          {travel.map((flt, i) => (
+            <div key={i}>
+              <Typography component="div" variant="inherit">
+                {getAptNameFromCode(flt.code_departure, airports)} -{" "}
+                {getAptNameFromCode(flt.code_arrival, airports)}
+              </Typography>
+              <Typography component="div" variant="inherit">
+                € {flt.price}
+              </Typography>
               <Divider />
-            </>
+            </div>
           ))}
         </CardContent>
       </Box>
