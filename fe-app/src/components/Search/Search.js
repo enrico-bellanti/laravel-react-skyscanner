@@ -1,11 +1,5 @@
-import React, { useState } from "react";
-import {
-  Typography,
-  CircularProgress,
-  AppBar,
-  TextField,
-  Button,
-} from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { Typography, AppBar, TextField, Button } from "@material-ui/core";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
@@ -19,42 +13,59 @@ import useStyles from "./styles";
 import { getFlightsBySearch } from "../../actions/flights";
 
 const Search = () => {
-  const [flightParams, setFlight] = useState({
-    code_departure: "",
-    code_arrival: "",
-  });
+  const { airports } = useSelector((state) => state.airports);
+  const [arrival, setArrival] = useState("");
+  const [departure, setDeparture] = useState("");
+  const [listDeparture, setListDeparture] = useState([]);
+  const [listArrival, setListArrival] = useState([]);
 
-  const { airports, isLoading } = useSelector((state) => state.airports);
+  useEffect(() => {
+    if (listDeparture.length < 1) {
+      setListDeparture(airports);
+    }
+    if (listArrival.length < 1) {
+      setListArrival(airports);
+    }
+  }, [airports, listDeparture, listArrival]);
 
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const setArrivalCode = (code) => {
+    setArrival(code);
+    const list = airports.filter((a) => a.code !== code);
+    setListDeparture(list);
+  };
+  const setDepartureCode = (code) => {
+    setDeparture(code);
+    const list = airports.filter((a) => a.code !== code);
+    setListArrival(list);
+  };
+
   const searchFlight = () => {
-    if (
-      flightParams.code_departure !== "" ||
-      flightParams.code_arrival !== ""
-    ) {
-      dispatch(getFlightsBySearch(flightParams));
+    if (departure !== "" && arrival !== "") {
+      dispatch(
+        getFlightsBySearch({
+          code_departure: departure,
+          code_arrival: arrival,
+        })
+      );
     } else {
       alert("You must insert Departure and Arrival");
     }
   };
 
-  return isLoading ? (
-    <CircularProgress />
-  ) : (
+  return (
     <AppBar className={classes.appBarSearch} position="static" color="inherit">
       <Typography variant="h5">Flight Search</Typography>
       <Autocomplete
         className={classes.textField}
         disablePortal
         id="combo-box-demo"
-        options={airports}
+        options={listDeparture}
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}
-        onChange={(e, value) =>
-          setFlight({ ...flightParams, code_departure: value.code })
-        }
+        onChange={(e, value) => setDepartureCode(value.code)}
         renderInput={(params) => <TextField {...params} label="Departure" />}
       />
 
@@ -62,13 +73,11 @@ const Search = () => {
         className={classes.textField}
         disablePortal
         id="combo-box-demo"
-        options={airports}
+        options={listArrival}
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Arrival" />}
-        onChange={(e, value) =>
-          setFlight({ ...flightParams, code_arrival: value.code })
-        }
+        onChange={(e, value) => setArrivalCode(value.code)}
       />
       <Button
         onClick={searchFlight}
