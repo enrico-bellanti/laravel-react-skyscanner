@@ -36,7 +36,7 @@ const App = () => {
           <Flights />
         </Grid>
 
-        <Grid item xs={12} sm={5} md={5}>
+        <Grid item xs={12} sm={5} md={4}>
           <Search />
           <Paper className={classes.pagination} elevation={6}>
             <Pagination />
