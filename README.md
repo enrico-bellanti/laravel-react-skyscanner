@@ -10,7 +10,7 @@ if you use sail
 $ /vendor/bin/sail migrate --seed
 ```
 
-if noy
+if not
 ```bash
 php artisan migrate --seed
 ```
