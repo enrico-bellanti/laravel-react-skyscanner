@@ -7,7 +7,7 @@ To test the App you can run in the back end the seeders will populate tables wit
 
 if you use sail
 ```bash
-$ /vendor/bin/sail migrate --seed
+$ /vendor/bin/sail artisan migrate --seed
 ```
 
 if not
