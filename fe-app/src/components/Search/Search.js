@@ -48,7 +48,7 @@ const Search = () => {
     if (searchQuery.code_departure !== "" && searchQuery.code_arrival !== "") {
       dispatch(getFlightsBySearch(searchQuery));
     } else {
-      alert("You must insert Departure and Arrival");
+      alert("Please enter Departure and Arrival Airport.");
     }
   };
 
@@ -58,7 +58,7 @@ const Search = () => {
       <Autocomplete
         className={classes.textField}
         disablePortal
-        id="combo-box-demo"
+        id="combo-box-demo-1"
         options={listDeparture}
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}
@@ -69,7 +69,7 @@ const Search = () => {
       <Autocomplete
         className={classes.textField}
         disablePortal
-        id="combo-box-demo"
+        id="combo-box-demo-2"
         options={listArrival}
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}

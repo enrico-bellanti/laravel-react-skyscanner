@@ -101,13 +101,15 @@ class FlightController extends Controller
 
         $paginated = collect($travels)->paginate(15)->toArray();
 
+        //remove string keys to not get an obj when transfor in json
         $data = array_values($paginated['data']);
-
         $paginated['data'] = $data;
 
         return response()->json($paginated);
     }
 
+    //this function restore old keys that are changed with query and separate the flights which are
+    //on the same travel
     protected function reorderStepoversList($list)
     {
         $newList = [];
