@@ -22,82 +22,40 @@ class FlightController extends Controller
         $dep_code = $validated['code_departure'];
         $arr_code = $validated['code_arrival'];
 
-        // NO STEPOVER
-        $no_stepover = DB::table('flights')
-            ->where($validated)
-            ->select(
-                'id AS id_1',
-                'code_departure AS code_departure_1',
-                'code_arrival AS code_arrival_1',
-                'price AS price_1',
-                'created_at AS created_at_1',
-                'updated_at AS updated_at_1',
-            )
-            ->get();
+        $collection = collect([]);
 
+        $query = DB::table('flights AS FLT1')
+            ->where('FLT1.code_departure', $dep_code);
 
-        // 1 STEOVER
-        $one_stepover = DB::table('flights AS FLT1')
-            ->where('FLT1.code_departure', $dep_code)
-            ->whereNot('FLT1.code_arrival', $arr_code)
-            ->join('flights AS FLT2', 'FLT1.code_arrival', '=', 'FLT2.code_departure')
-            ->whereNot('FLT2.code_departure', $dep_code)
-            ->where('FLT2.code_arrival', $arr_code)
-            ->select(
-                'FLT1.id AS id_1',
-                'FLT1.code_departure AS code_departure_1',
-                'FLT1.code_arrival AS code_arrival_1',
-                'FLT1.price AS price_1',
-                'FLT1.created_at AS created_at_1',
-                'FLT1.updated_at AS updated_at_1',
-                'FLT2.id AS id_2',
-                'FLT2.code_departure AS code_departure_2',
-                'FLT2.code_arrival AS code_arrival_2',
-                'FLT2.price AS price_2',
-                'FLT2.created_at AS created_at_2',
-                'FLT2.updated_at AS updated_at_2'
-            )
-            ->get();
+        $step_overs = 2;
 
+        for ($i = 0; $i <= $step_overs; $i++) {
+            $nf = ($i + 1);
 
-        // 2 STEOVER
-        $two_stepover = DB::table('flights AS FLT1')
-            ->where('FLT1.code_departure', $dep_code)
-            ->whereNot('FLT1.code_arrival', $arr_code)
-            ->join('flights AS FLT2', 'FLT1.code_arrival', '=', 'FLT2.code_departure')
-            ->whereNot('FLT2.code_departure', $dep_code)
-            ->whereNot('FLT2.code_arrival', $arr_code)
-            ->join('flights AS FLT3', 'FLT2.code_arrival', '=', 'FLT3.code_departure')
-            ->whereNot('FLT3.code_departure', $dep_code)
-            ->where('FLT3.code_arrival', $arr_code)
-            ->select(
-                'FLT1.id AS id_1',
-                'FLT1.code_departure AS code_departure_1',
-                'FLT1.code_arrival AS code_arrival_1',
-                'FLT1.price AS price_1',
-                'FLT1.created_at AS created_at_1',
-                'FLT1.updated_at AS updated_at_1',
-                'FLT2.id AS id_2',
-                'FLT2.code_departure AS code_departure_2',
-                'FLT2.code_arrival AS code_arrival_2',
-                'FLT2.price AS price_2',
-                'FLT2.created_at AS created_at_2',
-                'FLT2.updated_at AS updated_at_2',
-                'FLT3.id AS id_3',
-                'FLT3.code_departure AS code_departure_3',
-                'FLT3.code_arrival AS code_arrival_3',
-                'FLT3.price AS price_3',
-                'FLT3.created_at AS created_at_3',
-                'FLT3.updated_at AS updated_at_3'
-            )
-            ->get();
-
-
-        $travels = array_merge(
-            $this->reorderStepoversList($no_stepover),
-            $this->reorderStepoversList($one_stepover),
-            $this->reorderStepoversList($two_stepover)
-        );
+            if ($i === 0) {
+                $query_cloned = clone $query;
+                $query_selected_raw = $this->getSelectQueryRaw($nf);
+                $query_result = $query_cloned->where("FLT$nf.code_arrival", $arr_code)
+                    ->select($query_selected_raw)->get()->toArray();
+                $query->whereNot("FLT$nf.code_arrival", $arr_code);
+                $collection->push($query_result);
+            } else {
+                $query_cloned = clone $query;
+                $query_selected_raw = $this->getSelectQueryRaw($nf);
+                $query_result = $query_cloned
+                    ->join("flights AS FLT$nf", "FLT$i.code_arrival", "=", "FLT$nf.code_departure")
+                    ->whereNot("FLT$nf.code_departure", $dep_code)
+                    ->where("FLT$nf.code_arrival", $arr_code)
+                    ->select($query_selected_raw)
+                    ->get()->toArray();
+                $collection->push($query_result);
+                $query
+                    ->join("flights AS FLT$nf", "FLT$i.code_arrival", "=", "FLT$nf.code_departure")
+                    ->whereNot("FLT$nf.code_departure", $dep_code)
+                    ->whereNot("FLT$nf.code_arrival", $arr_code);
+            }
+        }
+        $travels = $this->setOrderStepoversList($collection->flatten(1)->toArray());
 
         $paginated = collect($travels)->paginate(15)->toArray();
 
@@ -108,37 +66,36 @@ class FlightController extends Controller
         return response()->json($paginated);
     }
 
-    //this function restore old keys that are changed with query and separate the flights which are
-    //on the same travel
-    protected function reorderStepoversList($list)
+    protected function getSelectQueryRaw($index)
+    {
+        $selected = [];
+        for ($i = 0; $i < $index; $i++) {
+            $nf = ($i + 1);
+            $selected[] = "FLT$nf.id AS id_$nf";
+            $selected[] = "FLT$nf.code_departure AS code_departure_$nf";
+            $selected[] = "FLT$nf.code_arrival AS code_arrival_$nf";
+            $selected[] = "FLT$nf.price AS price_$nf";
+        }
+        return $selected;
+    }
+
+    //refactor query results
+    protected function setOrderStepoversList($list)
     {
         $newList = [];
 
         foreach ($list as $item) {
             $currentObj = [];
-            if (isset($item->id_1)) {
+            $c = 1;
+
+            while (isset($item->{"id_$c"})) {
                 $currentObj[] = [
-                    "id" => $item->id_1,
-                    "code_departure" => $item->code_departure_1,
-                    "code_arrival" => $item->code_arrival_1,
-                    "price" => $item->price_1
+                    "id" => $item->{"id_$c"},
+                    "code_departure" => $item->{"code_departure_$c"},
+                    "code_arrival" => $item->{"code_arrival_$c"},
+                    "price" => $item->{"price_$c"}
                 ];
-            }
-            if (isset($item->id_2)) {
-                $currentObj[] = [
-                    "id" => $item->id_2,
-                    "code_departure" => $item->code_departure_2,
-                    "code_arrival" => $item->code_arrival_2,
-                    "price" => $item->price_2
-                ];
-            }
-            if (isset($item->id_3)) {
-                $currentObj[] = [
-                    "id" => $item->id_3,
-                    "code_departure" => $item->code_departure_3,
-                    "code_arrival" => $item->code_arrival_3,
-                    "price" => $item->price_3
-                ];
+                $c++;
             }
             $newList[] = $currentObj;
         }
