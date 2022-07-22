@@ -1,5 +1,5 @@
 # laravel-react-skyscanner
-simple tool to reasearch lower flight
+simple tool to reasearch lower flights
 
 To build this app has been used React for the front-end and Laravel for back-end.
 
