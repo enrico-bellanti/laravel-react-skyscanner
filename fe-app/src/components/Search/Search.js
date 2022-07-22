@@ -34,14 +34,24 @@ const Search = () => {
   const dispatch = useDispatch();
 
   const setArrivalCode = (code_arrival) => {
-    setQuery({ ...searchQuery, code_arrival });
-    const list = airports.filter((a) => a.code !== code_arrival);
-    setListDeparture(list);
+    if (!!code_arrival) {
+      setQuery({ ...searchQuery, code_arrival: code_arrival.code });
+      const list = airports.filter((a) => a.code !== code_arrival.code);
+      setListDeparture(list);
+    } else {
+      setListArrival(airports);
+      setQuery({ ...searchQuery, code_arrival: "" });
+    }
   };
   const setDepartureCode = (code_departure) => {
-    setQuery({ ...searchQuery, code_departure });
-    const list = airports.filter((a) => a.code !== code_departure);
-    setListArrival(list);
+    if (!!code_departure) {
+      setQuery({ ...searchQuery, code_departure: code_departure.code });
+      const list = airports.filter((a) => a.code !== code_departure.code);
+      setListArrival(list);
+    } else {
+      setListArrival(airports);
+      setQuery({ ...searchQuery, code_departure: "" });
+    }
   };
 
   const searchFlight = () => {
@@ -62,7 +72,7 @@ const Search = () => {
         options={listDeparture}
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}
-        onChange={(e, value) => setDepartureCode(value.code)}
+        onChange={(e, value) => setDepartureCode(value)}
         renderInput={(params) => <TextField {...params} label="Departure" />}
       />
 
@@ -74,7 +84,7 @@ const Search = () => {
         getOptionLabel={(apt) => apt.name}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Arrival" />}
-        onChange={(e, value) => setArrivalCode(value.code)}
+        onChange={(e, value) => setArrivalCode(value)}
       />
       <Button
         onClick={searchFlight}
